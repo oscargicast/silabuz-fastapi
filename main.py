@@ -20,29 +20,6 @@ app = FastAPI(
 
 Base.metadata.create_all(bind=engine)
 
-items = [{
-    "id": 1,
-    "name": "mesa",
-    "price": 70.5,
-    "status": StatusItem.good,
-}, {
-    "id": 2,
-    "name": "silla",
-    "price": 50.5,
-    "status": StatusItem.bad,
-}, {
-    "id": 3,
-    "name": "pc",
-    "price": 1050,
-    "status": StatusItem.bad,
-}, {
-    "id": 4,
-    "name": "laptop",
-    "price": 2050,
-    "status": StatusItem.good,
-}]
-
-
 
 @app.get("/")
 def read_root():
