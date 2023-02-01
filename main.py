@@ -1,5 +1,5 @@
 from config.database import engine, Base, Session
-from fastapi import FastAPI, Body, Query, Path
+from fastapi import FastAPI, Body, Query, Path, Depends
 from fastapi.responses import HTMLResponse, JSONResponse
 from models.item import ItemModel
 from typing import Union, List
@@ -11,6 +11,8 @@ from schemas.item import (
     PutItem,
     CreateItem,
 )
+from schemas.user import User
+from utils.jwt_manager import create_token, JWTBearer
 
 
 app = FastAPI(
@@ -23,8 +25,22 @@ Base.metadata.create_all(bind=engine)
 
 @app.get("/")
 def read_root():
-    return JSONResponse(status_code=201, content={"message": "Chau mundo"})
-    # return HTMLResponse('<h1>Hello world</h1>')
+    # return JSONResponse(status_code=201, content={"message": "Chau mundo"})
+    return HTMLResponse(status_code=201, content='<h1>Hello world</h1>')
+
+
+@app.post("/login/", tags=["auth"])
+def login(user: User):
+    if user.email == "admin@gmail.com" and user.password == "admin":
+        token = create_token(user.dict())
+        return JSONResponse(status_code=200, content=token)
+    return JSONResponse(
+        status_code=403,
+        content={
+            "message": "Check the email or password!",
+        },
+    )
+
 
 # CRUD: Create, Read, Update, Delete.
 # GET, POST, PUT, PATCH, DELETE.
@@ -55,7 +71,7 @@ async def get_item(item_id: int = Path(ge=1)) -> FullItem:
     return JSONResponse(status_code=200, content=jsonable_encoder(result))
 
 
-@app.post("/items/", response_model=FullItem, status_code=201, tags=["item"])
+@app.post("/items/", response_model=FullItem, status_code=201, tags=["item"], dependencies=[Depends(JWTBearer())])
 async def create_item(new_item: CreateItem, add_depreciation: bool = Body(default=False)) -> FullItem:
     """Create an item."""
     db = Session()
