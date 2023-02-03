@@ -1,5 +1,7 @@
 # FastAPI by Silabuz
 
+version: 0.1
+
 ## Query param: URL
 silabuz.com/?search=sillas&status=good
 -> Query params:
