@@ -5,3 +5,4 @@ ipdb==0.13.11
 pytest==7.2.1
 httpx==0.23.3
 PyJWT==2.6.0
+coverage==7.1.0
